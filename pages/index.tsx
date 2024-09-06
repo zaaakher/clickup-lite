@@ -4,6 +4,8 @@ import { GetServerSideProps } from "next";
 import SpacesList from "@/components/SpacesList";
 import ListSelector from "@/components/ListSelector";
 import TaskList from "@/components/TaskList";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface HomeProps {
   isAuthenticated: boolean;
@@ -28,24 +30,21 @@ export default function Home({ isAuthenticated }: HomeProps) {
 
   if (!isClientAuthenticated) {
     return (
-      <div>
-        <h1>ClickUp Lite</h1>
-        <a href="/api/auth/redirect">Connect ClickUp</a>
+      <div className="h-full flex justify-center items-center">
+        <Link href="/api/auth/redirect">
+          <Button>Connect ClickUp</Button>
+        </Link>
       </div>
     );
   }
 
   return (
-    <div>
-      <h1>ClickUp Lite</h1>
-      {!selectedListId ? (
+    <div suppressHydrationWarning className="w-full h-full">
+      <div className="w-full p-4 ">
+        <h2>Selected List ID: {selectedListId}</h2>
         <ListSelector onSelect={handleListSelect} />
-      ) : (
-        <div>
-          <h2>Selected List ID: {selectedListId}</h2>
-          <TaskList listId={selectedListId} />
-        </div>
-      )}
+        {selectedListId && <TaskList listId={selectedListId} />}
+      </div>
     </div>
   );
 }

@@ -30,7 +30,6 @@ export default async function handler(
       "https://api.clickup.com/api/v2/team",
       { headers: { Authorization: clickupToken } }
     );
-    console.log("Teams data:", teamsData);
     const spaces = await Promise.all(
       teamsData.teams.map(async (team) => {
         const { data: spacesData } = await axios.get<SpacesResponse>(

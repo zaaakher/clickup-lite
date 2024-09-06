@@ -39,7 +39,6 @@ export default function TaskList({ listId }: { listId: string }) {
           throw new Error("Failed to fetch tasks");
         }
         const data: Task[] = await response.json();
-        console.log("data is ", data);
         setTasks(data);
 
         // Fetch allowed statuses
@@ -51,8 +50,6 @@ export default function TaskList({ listId }: { listId: string }) {
         }
         const statusesData = await statusesResponse.json();
         setStatuses(statusesData.statuses);
-
-        console.log("Available statuses:", statusesData.statuses);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -64,8 +61,6 @@ export default function TaskList({ listId }: { listId: string }) {
   }, [listId]);
 
   const handleCheckboxChange = async (taskId: string, isChecked: boolean) => {
-    console.log("task id", taskId);
-    console.log("is scheckced", isChecked);
     try {
       const response = await fetch(`/api/updateTaskStatus`, {
         method: "POST",
@@ -74,7 +69,7 @@ export default function TaskList({ listId }: { listId: string }) {
         },
         body: JSON.stringify({
           taskId,
-          status: isChecked ? "complete" : "Open", // Assuming "open" is the default status, adjust accordingly
+          status: isChecked ? "complete" : "Open",
         }),
       });
 
@@ -102,37 +97,35 @@ export default function TaskList({ listId }: { listId: string }) {
   }
 
   return (
-    <div>
-      <h2>Tasks in Selected List</h2>
-
-      <div className="bg p-4 max-w-[1000px]">
-        <Table>
-          <TableCaption>A list of your tasks.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead className="w-[200px]">ID</TableHead>
+    <div className="p-4">
+      <Table>
+        <TableCaption>A list of your tasks.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead></TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead className="w-[200px]">ID</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {tasks.map((task) => (
+            <TableRow key={task.id}>
+              <TableCell>
+                <Checkbox
+                  checked={task.status.status === "closed"}
+                  onCheckedChange={(e) =>
+                    handleCheckboxChange(task.id, e as boolean)
+                  }
+                />
+              </TableCell>
+              <TableCell>{task.name}</TableCell>
+              <TableCell className="font-medium">
+                {task.custom_id || task.id}
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {tasks.map((task) => (
-              <TableRow key={task.id}>
-                <TableCell>
-                  <Checkbox
-                    checked={task.status.status === "closed"}
-                    onCheckedChange={(e) =>
-                      handleCheckboxChange(task.id, e as boolean)
-                    }
-                  />
-                </TableCell>
-                <TableCell>{task.name}</TableCell>
-                <TableCell className="font-medium">{task.custom_id}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

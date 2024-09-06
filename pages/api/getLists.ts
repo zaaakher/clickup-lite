@@ -17,7 +17,6 @@ export default async function handler(
       "https://api.clickup.com/api/v2/team",
       { headers: { Authorization: clickupToken } }
     );
-    console.log("Teams data:", teamsResponse.data);
     const teams = teamsResponse.data.teams;
     const lists = await Promise.all(
       teams.map(async (team: any) => {

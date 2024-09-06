@@ -28,15 +28,8 @@ export default async function handler(
     const response = await axios.put(
       `https://api.clickup.com/api/v2/task/${taskId}`,
       { status },
-      {
-        headers: {
-          Authorization: clickupToken,
-        },
-      }
+      { headers: { Authorization: clickupToken } }
     );
-
-    // Log the response for debugging
-    console.log("ClickUp API response:", response.data);
 
     // Respond to the client
     res.status(200).json({ success: true, data: response.data });
